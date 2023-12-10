@@ -14,7 +14,7 @@ export const getSubjectsFromAPI: () => Promise<SubjectSchedule[]> =
   async () => {
     //const { materias } = materiasResponse as MateriaResponse; //Comentar luego
 
-    const materiasResponse = await fetch("http://localhost:3002/materias", {
+    const materiasResponse = await fetch("https://calendarp-production.up.railway.app/materias", {
       method: "GET"
     });
     const { materias } = await materiasResponse.json() as MateriaResponse;
@@ -42,7 +42,7 @@ export const getAvailableSchedulesForSubject: (
 ) => Promise<Schedule[]> = async(subject_id) => {
   //const { horarios } = horarioMateriaResponse as HorarioMateriaResponse;
 
-  const horarioMateriaResponse = await fetch(`http://localhost:3002/horario/${subject_id}`, {
+  const horarioMateriaResponse = await fetch(`https://calendarp-production.up.railway.app/horario/${subject_id}`, {
     method: "GET"
   });
   const { horarios } = await horarioMateriaResponse.json() as HorarioMateriaResponse;
@@ -53,7 +53,7 @@ export const getAvailableSchedulesForSubject: (
 export const generatePdf = async (data) => {
   try {
     // Configurar la solicitud
-    const response = await fetch('http://localhost:3002/generate_pdf', {
+    const response = await fetch('https://calendarp-production.up.railway.app/generate_pdf', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
