@@ -10,11 +10,19 @@ interface HorarioMateriaResponse {
   horarios: Schedule[];
 }
 
+interface SubjectSemester {
+  id: string;
+}
+
+interface SemesterResponse {
+  semestres: Map<string, SubjectSemester[]>
+}
+
 export const getSubjectsFromAPI: () => Promise<SubjectSchedule[]> =
   async () => {
     //const { materias } = materiasResponse as MateriaResponse; //Comentar luego
 
-    const materiasResponse = await fetch("https://calendarp-production.up.railway.app/materias", {
+    const materiasResponse = await fetch("http://localhost:3001/materias", {
       method: "GET"
     });
     const { materias } = await materiasResponse.json() as MateriaResponse;
@@ -24,7 +32,7 @@ export const getSubjectsFromAPI: () => Promise<SubjectSchedule[]> =
 
 const mergeSubjectsWithSchedule: (
   subjects: Subject[]
-) => Promise<SubjectSchedule[]> = (subjects) => {
+) => Promise<SubjectSchedule[]> = async (subjects) => {
   const schedulePromises = subjects.map((subject) =>
     getAvailableSchedulesForSubject(subject.id).then((schedules) => {
       return {
@@ -32,9 +40,15 @@ const mergeSubjectsWithSchedule: (
         schedules,
       };
     })
-  );
+  )
 
-  return Promise.all(schedulePromises);
+  const subjectSchedules = await Promise.all(schedulePromises);
+
+  // Filter subjects where schedules.length > 0
+  const filteredSubjects = subjectSchedules.filter((subject) => subject.schedules.length > 0);
+  
+
+  return Promise.all(filteredSubjects);
 };
 
 export const getAvailableSchedulesForSubject: (
@@ -42,10 +56,10 @@ export const getAvailableSchedulesForSubject: (
 ) => Promise<Schedule[]> = async(subject_id) => {
   //const { horarios } = horarioMateriaResponse as HorarioMateriaResponse;
 
-  const horarioMateriaResponse = await fetch(`https://calendarp-production.up.railway.app/horario/${subject_id}`, {
+  const horarioMateriaResponse = await fetch(`http://localhost:3001/horario/${subject_id}`, {
     method: "GET"
   });
-  const { horarios } = await horarioMateriaResponse.json() as HorarioMateriaResponse;
+  let { horarios } = await horarioMateriaResponse.json() as HorarioMateriaResponse;
 
   return Promise.resolve(horarios);
 };
@@ -53,7 +67,7 @@ export const getAvailableSchedulesForSubject: (
 export const generatePdf = async (data) => {
   try {
     // Configurar la solicitud
-    const response = await fetch('https://calendarp-production.up.railway.app/generate_pdf', {
+    const response = await fetch(process.env['backend_url'] + '/generate_pdf', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -85,4 +99,38 @@ export const generatePdf = async (data) => {
   } catch (error) {
     console.error('Error al generar el PDF:', error);
   }
+};
+
+export const getSemesters: () => Promise<SemesterResponse> = async () => {
+  try {
+    // Configurar la solicitud
+    const response = await fetch('http://localhost:3001/semestres', {
+      method: 'GET'
+    });
+
+    return Promise.resolve(await response.json() as SemesterResponse);
+
+  } catch (error) {
+    console.error('Error al enviar excel:', error);
+  }
+
+  return Promise.resolve(null);
+};
+
+export const sendExcel = async (data) => {
+  console.log("SENDING EXCEL")
+  try {
+    // Configurar la solicitud
+    const response = await fetch('http://localhost:3001/upload_xlsx_new', {
+      method: 'POST',
+      body: data,
+    });
+
+    return response;
+
+  } catch (error) {
+    console.error('Error al enviar excel:', error);
+  }
+
+  return Promise.resolve(null);
 };

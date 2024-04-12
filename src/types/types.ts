@@ -32,6 +32,11 @@ export interface ParentSubject {
   childSubjects: SubjectSchedule[];
 }
 
+export interface SubjectsBySemester {
+  id: string;
+  subjects: SubjectSchedule[];
+}
+
 export interface daysOfWeek {
   fecha: string;
   dia: string;
