@@ -21,7 +21,7 @@ export const App = (name) => {
   // Create a router instance
   const router = createBrowserRouter([
     {
-      path: '/login',
+      path: '/',
       element: (
         <Login
           action={action}
