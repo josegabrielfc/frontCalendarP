@@ -1,52 +1,147 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
 
 .my-form-container {
-    max-width: 900px;
-    margin: auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-  }
+  width: 600px;
+  padding: 20px;
+  border: 1px thin #ccc;
+  border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.95);
+}
 
-  .my-form {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .form-group {
-    margin-bottom: 15px;
-  }
-  
-  label {
-    display: block;
-    margin-bottom: 8px;
-  }
-  
-  input {
-    padding: 8px;
-    width: 100%;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-  button {
-    padding: 10px;
-    background-color: #c32d2d;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  button:hover {
-    background-color: #fd4d4d;
-  }
-  
-  h1 {
-    /*color: #c32d2d;*/
-    color: transparent;
-    font-size: 5em; 
-    font-weight: bold;
-    text-align: center;
-    background: linear-gradient(45deg, #c32d2d, #fd4d4d, #d29393);
-    -webkit-background-clip: text; /* Propiedad específica para WebKit (Chrome, Safari, etc.) */
-  }
+.my-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.form-group {
+  /*margin-bottom: 15px;*/
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+}
+
+input {
+  padding: 8px;
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+button {
+  padding: 10px;
+  width: 8rem;
+  background-color: #c32d2d;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+button:hover {
+  background-color: #fd4d4d;
+}
+
+h1 {
+  font-size: 5em;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+h1,
+h2 {
+  color: transparent;
+  font-weight: bold;
+  text-align: center;
+  background: linear-gradient(45deg, #c32d2d, #fd4d4d, #d29393);
+  -webkit-background-clip: text;
+}
+
+body {
+  background: linear-gradient(
+    to bottom,
+    #ffffff,
+    #fffff1,
+    #fffff2,
+    #fffff4,
+    #ffdfd0,
+    #ffbfaf,
+    #ff9e8f,
+    #ff7c70,
+    #f9635c,
+    #ec5853
+  );
+  background-size: cover; /* #ffffff, #f2f2f2, #f3f4f5, #f3f5f8, #e9edf7, #ffbfb0, #ff9688, #ff6961, #fd4d4d); */
+  width: auto;
+  height: auto;
+}
+
+.content-select select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.content-select select::-ms-expand {
+  display: none;
+}
+
+.content-select {
+  max-width: 250px;
+  position: relative;
+  margin-left: 2.75rem;
+}
+
+.content-select select {
+  display: inline-block;
+  width: 100%;
+  cursor: pointer;
+  padding: 7px 10px;
+  height: 42px;
+  outline: 0;
+  border: 0;
+  border-radius: 0;
+  background: #f0f0f0;
+  color: #7b7b7b;
+  font-size: 1em;
+  color: #999;
+  font-family: "Quicksand", sans-serif;
+  border: 2px solid rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  position: relative;
+  transition: all 0.25s ease;
+}
+
+.content-select select:hover {
+  background: #fffffa;
+}
+
+/* 
+Creamos la fecha que aparece a la izquierda del select.
+Realmente este elemento es un cuadrado que sólo tienen
+dos bordes con color y que giramos con transform: rotate(-45deg);
+*/
+.content-select i {
+  position: absolute;
+  right: 20px;
+  top: calc(50% - 13px);
+  width: 16px;
+  height: 16px;
+  display: block;
+  border-left: 4px solid #ec5853;
+  border-bottom: 4px solid #ec5853;
+  transform: rotate(-45deg); /* Giramos el cuadrado */
+  transition: all 0.25s ease;
+}
+
+.content-select:hover i {
+  margin-top: 3px;
+}

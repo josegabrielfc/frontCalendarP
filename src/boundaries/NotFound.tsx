@@ -1,11 +1,12 @@
 // NotFound.tsx
+import { textAlign } from 'html2canvas/dist/types/css/property-descriptors/text-align';
 import React from 'react';
 
 const NotFound: React.FC = () => {
   return (
     <div>
       <h1>404 Not Found</h1>
-      <p>The page you are looking for does not exist.</p>
+      <h4 style={{ textAlign: 'center' }}>La página que buscas no existe.</h4>
     </div>
   );
 };

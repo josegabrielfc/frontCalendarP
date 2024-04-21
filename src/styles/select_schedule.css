@@ -1,3 +1,6 @@
+body{
+  /*background: #fffffc;*/
+}
 .subject-container {
   margin-bottom: 10px;
   border: 1px solid #ddd;
@@ -6,7 +9,8 @@
 }
 
 .big-container{
-  margin-left: 5rem;
+  margin-left: 1rem;
+  margin-right: 1rem;
 }
 
 .subject-name, .semester-name {
@@ -87,4 +91,8 @@
 .next-page:hover {
   background-color: #ee4747;
   border: 1px solid #ee4747;
+}
+
+.calendar{
+  margin-right: 5rem;
 }

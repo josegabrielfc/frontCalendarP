@@ -1,8 +1,8 @@
 import React from 'react';
 import './../styles/calendar.css';
 
-const daysOfWeek1 = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes'];
-const daysOfWeek2 = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes'];
+const daysOfWeek1 = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'];
+const daysOfWeek2 = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'];
 
 export function convertHourToInterval(hour) {
   // Convertir la hora a un formato de 24 horas

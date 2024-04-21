@@ -18,6 +18,46 @@ interface SemesterResponse {
   semestres: Map<string, SubjectSemester[]>
 }
 
+interface RandomResponse {
+  semestres: Map<string, SubjectSemester[]>
+}
+
+// Definir las interfaces necesarias
+interface UserData {
+  name: string;
+  email: string;
+  password: string;
+}
+
+interface RegisterResponse {
+  status: string;
+  message: string;
+  redirect?: string;
+}
+
+
+export const registerUser: (userData: UserData) => Promise<RegisterResponse> = async (userData) => {
+  try {
+    const response = await fetch('http://localhost:3001/registrar', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(userData)
+    });
+
+    if (!response.ok) {
+      const errorMessage = await response.text();
+      throw new Error(`Error en la solicitud: ${errorMessage}`);
+    }
+
+    return await response.json() as RegisterResponse;
+  } catch (error) {
+    console.error('Error al registrar usuario:', error);
+    throw error;
+  }
+};
+
 export const getSubjectsFromAPI: () => Promise<SubjectSchedule[]> =
   async () => {
     //const { materias } = materiasResponse as MateriaResponse; //Comentar luego
