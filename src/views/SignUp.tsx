@@ -11,19 +11,22 @@ interface Props {
   onActionChange: (newAction: string) => void;
 }
 
-const LoginSingUp: React.FC<Props> = ({
+const SignUp: React.FC<Props> = ({
   action,
   userIcon,
   emailIcon,
   passwordIcon,
   onActionChange,
 }) => {
-  const navigate = useNavigate();
   const [userData, setUserData] = useState({
     name: "",
     email: "",
     password: "",
   });
+  const navigate = useNavigate();
+  const goToAnotherPage = (str) => {
+    navigate(str);
+  };
 
   const handleActionChange = (newAction: string) => {
     onActionChange(newAction);
@@ -51,6 +54,7 @@ const LoginSingUp: React.FC<Props> = ({
         const registro = await registerUser(userData);
         alert("Se ha agregado satisfactoriamente el usuario");
         console.log(registro);
+        goToAnotherPage("/");
       }
     } catch (error) {
       console.error("Error al registrar usuario:", error);
@@ -108,7 +112,7 @@ const LoginSingUp: React.FC<Props> = ({
         </div>
         <div
           className={action === "Registrarse" ? "submit gray" : "submit"}
-          onClick={() => handleActionChange("Ingresar")}
+          onClick={() => goToAnotherPage("/")}
         >
           Ingresar
         </div>
@@ -117,4 +121,4 @@ const LoginSingUp: React.FC<Props> = ({
   );
 };
 
-export default LoginSingUp;
+export default SignUp;

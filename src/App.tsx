@@ -9,7 +9,7 @@ import PdfWrapper from './components/PdfWrapper';
 import CalendarSelectFirstWeek from './views/CalendarSelectFirstWeek';
 import CalendarSelectSecondWeek from './views/CalendarSelectSecondWeek';
 import imagenes from "./assets/imagenes.js";
-import SingUp from './views/SingUp';
+import SingUp from './views/SignUp';
 
 export const App = (name) => {
   const [action, setAction] = useState<string>("Registrarse");

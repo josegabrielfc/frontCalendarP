@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../styles/LoginSignup.css";
 import { useNavigate } from "react-router-dom";
-import { registerUser } from "../api/api";
+import { loginUser } from "../api/api";
 
 interface Props {
   action: string;
@@ -16,12 +16,17 @@ const Login: React.FC<Props> = ({
   passwordIcon,
   onActionChange,
 }) => {
-  const navigate = useNavigate();
+  
   const [userData, setUserData] = useState({
     name: "",
     email: "",
     password: "",
   });
+
+  const navigate = useNavigate();
+  const goToAnotherPage = (str) => {
+    navigate(str);
+  };
 
   const handleActionChange = (newAction: string) => {
     onActionChange(newAction);
@@ -37,21 +42,22 @@ const Login: React.FC<Props> = ({
     }));
   };
 
-  const handleRegisterClick = async () => {
+  const handleLoginClick = async () => {
     try {
       if (
-        userData.name === "" ||
         userData.email === "" ||
         userData.password === ""
       ) {
         alert("Todos los campos son necesarios");
       } else {
-        const registro = await registerUser(userData);
-        alert("Se ha agregado satisfactoriamente el usuario");
-        console.log(registro);
+        const login = await loginUser(userData);
+        alert("Se ha ingresado satisfactoriamente");
+        console.log(login);
+        goToAnotherPage("/home");
       }
     } catch (error) {
-      console.error("Error al registrar usuario:", error);
+      console.error(error);
+      alert("Error al Ingresar, correo o contraseña incorrectas");
     }
   };
 
@@ -87,13 +93,13 @@ const Login: React.FC<Props> = ({
       <div className="submit-container">
         <div
           className={action === "Registrarse" ? "submit gray" : "submit"}
-          onClick={handleRegisterClick}
+          onClick={() => goToAnotherPage("/register")}
         >
           Registrarse
         </div>
         <div
           className={action === "Ingresar" ? "submit gray" : "submit"}
-          onClick={() => handleActionChange("Ingresar")}
+          onClick={handleLoginClick}
         >
           Ingresar
         </div>

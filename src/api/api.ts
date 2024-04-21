@@ -29,16 +29,16 @@ interface UserData {
   password: string;
 }
 
-interface RegisterResponse {
+interface RegisterLoginResponse {
   status: string;
   message: string;
   redirect?: string;
 }
 
 
-export const registerUser: (userData: UserData) => Promise<RegisterResponse> = async (userData) => {
+export const registerUser: (userData: UserData) => Promise<RegisterLoginResponse> = async (userData) => {
   try {
-    const response = await fetch('http://localhost:3001/registrar', {
+    const response = await fetch('http://localhost:3001/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -51,12 +51,33 @@ export const registerUser: (userData: UserData) => Promise<RegisterResponse> = a
       throw new Error(`Error en la solicitud: ${errorMessage}`);
     }
 
-    return await response.json() as RegisterResponse;
+    return await response.json() as RegisterLoginResponse;
   } catch (error) {
     console.error('Error al registrar usuario:', error);
     throw error;
   }
 };
+
+export const loginUser: (userData: UserData) => Promise<RegisterLoginResponse> = async (userData) => {
+  try {
+    const response = await fetch('http://localhost:3001/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(userData)
+    });
+    if (!response.ok) {
+      const errorMessage = await response.text();
+      throw new Error(`Error en la solicitud: ${errorMessage}`);
+    }
+
+    return await response.json() as RegisterLoginResponse;
+  } catch (error) {
+    console.error('Error al ingresar:', error);
+    throw error;
+  }
+}
 
 export const getSubjectsFromAPI: () => Promise<SubjectSchedule[]> =
   async () => {
@@ -86,14 +107,14 @@ const mergeSubjectsWithSchedule: (
 
   // Filter subjects where schedules.length > 0
   const filteredSubjects = subjectSchedules.filter((subject) => subject.schedules.length > 0);
-  
+
 
   return Promise.all(filteredSubjects);
 };
 
 export const getAvailableSchedulesForSubject: (
   subject_id: number
-) => Promise<Schedule[]> = async(subject_id) => {
+) => Promise<Schedule[]> = async (subject_id) => {
   //const { horarios } = horarioMateriaResponse as HorarioMateriaResponse;
 
   const horarioMateriaResponse = await fetch(`http://localhost:3001/horario/${subject_id}`, {

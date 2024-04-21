@@ -60,7 +60,9 @@ const SelectScheduleFirstWeek: React.FC = () => {
   return (
     <>
       <h2> El horario generado para la primera semana es </h2>
+      <div className="calendar">
       <AvailableSubjectsWeekCalendar />
+      </div>
       <div className="button-wrapper">
         <button className="next-page" onClick={handleRandomize}>
           Generar aleatorio

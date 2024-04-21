@@ -62,7 +62,6 @@ const Home: React.FC = () => {
   };
 
   return (
-    <body>
       <div className="container">
         <div className="header-container">
           <img src={imagenes.header} alt="Header" />
@@ -100,7 +99,7 @@ const Home: React.FC = () => {
               </label>
             </div>
             <br></br>
-            <form action="#">
+            <div className="form-group">
               <label htmlFor="lang">
                 Seleccione como desea generar su Calendario
               </label>
@@ -112,14 +111,13 @@ const Home: React.FC = () => {
                 </select>
                 <i></i>
               </div>
-            </form>
+            </div>
             <div className="form-group">
               <button type="submit">Submit</button>
             </div>
           </form>
         </div>
       </div>
-    </body>
   );
 };
 
