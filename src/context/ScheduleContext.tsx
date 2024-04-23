@@ -3,9 +3,14 @@ import React, { createContext, useState, useContext, ReactNode } from 'react';
 import { Subject, Schedule, SubjectSelectedSchedule } from './../types/types';
 
 interface SubjectContextType {
+  initialDate: Date;
   firstWeek: SubjectSelectedSchedule[];
   secondWeek: SubjectSelectedSchedule[];
   addSubjectFirstWeek: (subject: Subject, schedule: Schedule) => void;
+  addFirstWeek: (records: any[]) => void;
+  setInitialDate: (date: Date) => void;
+  holidays: any;
+  setHolidays: (holidays: any) => void;
   addSubjectSecondWeek: (subject: Subject, schedule: Schedule) => void;
 }
 
@@ -18,6 +23,8 @@ interface SubjectProviderProps {
 export const SubjectProvider: React.FC<SubjectProviderProps> = ({ children }) => {
   const [firstWeek, setFirstWeek] = useState<SubjectSelectedSchedule[]>([]);
   const [secondWeek, setSecondWeek] = useState<SubjectSelectedSchedule[]>([]);
+  const [initialDate, setInitialDate] = useState<Date>(null);
+  const [holidays, setHolidays] = useState<any>(null)
 
   const addSubjectFirstWeek = (subject: Subject, schedule: Schedule) => {
     const updatedSubjects = firstWeek.map((s) => {
@@ -38,6 +45,28 @@ export const SubjectProvider: React.FC<SubjectProviderProps> = ({ children }) =>
       };
       updatedSubjects.push(newSubject);
     }
+
+    setFirstWeek(updatedSubjects);
+  };
+
+  const addFirstWeek = (records: any[]) => {
+    const updatedSubjects = []
+
+    records.forEach(record => {
+      const schedules = record[1] as Schedule[]
+      const subject = record[0] as Subject
+
+      const schedulesMapped = new Map<string, Schedule>();
+
+      schedules.forEach(schedule => schedulesMapped.set(schedule.grupo_id, schedule))
+
+      const newSubject: SubjectSelectedSchedule = {
+        ...subject,
+        schedules: schedulesMapped,
+      };
+      updatedSubjects.push(newSubject);
+    })
+
 
     setFirstWeek(updatedSubjects);
   };
@@ -72,6 +101,11 @@ export const SubjectProvider: React.FC<SubjectProviderProps> = ({ children }) =>
         secondWeek,
         addSubjectFirstWeek,
         addSubjectSecondWeek,
+        addFirstWeek,
+        initialDate,
+        setInitialDate,
+        holidays,
+        setHolidays
       }}
     >
       {children}

@@ -35,6 +35,21 @@ interface RegisterLoginResponse {
   redirect?: string;
 }
 
+const getRandomSchedule: () => Promise<HorarioMateriaResponse> = async () => {
+  try {
+    // Configurar la solicitud
+    const response = await fetch('http://localhost:3001/seleccionar-aleatorio', {
+      method: 'GET'
+    });
+
+    return Promise.resolve(await response.json() as HorarioMateriaResponse);
+
+  } catch (error) {
+    console.error('Error al enviar excel:', error);
+  }
+
+  return Promise.resolve(null);
+};
 
 export const registerUser: (userData: UserData) => Promise<RegisterLoginResponse> = async (userData) => {
   try {
@@ -78,6 +93,52 @@ export const loginUser: (userData: UserData) => Promise<RegisterLoginResponse> =
     throw error;
   }
 }
+
+export const getAutoSubjectsFromAPI: () => Promise<SubjectSchedule[]> =
+  async () => {
+    //const { materias } = materiasResponse as MateriaResponse; //Comentar luego
+
+    const horarioMateriaResponse = await getRandomSchedule()
+    const materiasResponse = await fetch("http://localhost:3001/materias", {
+      method: "GET"
+    });
+    const { materias } = await materiasResponse.json() as MateriaResponse;
+
+    return mergeSubjectsWithAutoSchedule(materias, horarioMateriaResponse);
+};
+
+const mergeSubjectsWithAutoSchedule: (
+  subjects: Subject[],
+  horarioMateriaResponse: HorarioMateriaResponse
+) => Promise<SubjectSchedule[]> = async (subjects, horarioMateriaResponse) => {
+  const schedulePromises = subjects.map((subject) =>
+  getAvailableSchedulesForAutoSubject(subject.id, horarioMateriaResponse).then((schedules) => {
+      return {
+        ...subject,
+        schedules,
+      };
+    })
+  )
+
+  const subjectSchedules = await Promise.all(schedulePromises);
+
+  // Filter subjects where schedules.length > 0
+  const filteredSubjects = subjectSchedules.filter((subject) => subject.schedules.length > 0);
+
+
+  return Promise.all(filteredSubjects);
+};
+
+export const getAvailableSchedulesForAutoSubject: (
+  subject_id: number,
+  horarioMateriaResponse: HorarioMateriaResponse
+) => Promise<Schedule[]> = async (subject_id, horarioMateriaResponse) => {
+  //const { horarios } = horarioMateriaResponse as HorarioMateriaResponse;
+
+  let { horarios } = horarioMateriaResponse;
+
+  return Promise.resolve(horarios.filter(schedule => schedule.materia_id === subject_id));
+};
 
 export const getSubjectsFromAPI: () => Promise<SubjectSchedule[]> =
   async () => {
@@ -182,7 +243,7 @@ export const sendExcel = async (data) => {
   console.log("SENDING EXCEL")
   try {
     // Configurar la solicitud
-    const response = await fetch('http://localhost:3001/upload_xlsx_new', {
+    const response = await fetch('http://localhost:3001/upload_xlsx', {
       method: 'POST',
       body: data,
     });
