@@ -35,10 +35,11 @@ interface RegisterLoginResponse {
   redirect?: string;
 }
 
+const url = "";
 
 export const registerUser: (userData: UserData) => Promise<RegisterLoginResponse> = async (userData) => {
   try {
-    const response = await fetch('http://localhost:3001/register', {
+    const response = await fetch(`${process.env.backend_url}/register`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -60,7 +61,7 @@ export const registerUser: (userData: UserData) => Promise<RegisterLoginResponse
 
 export const loginUser: (userData: UserData) => Promise<RegisterLoginResponse> = async (userData) => {
   try {
-    const response = await fetch('http://localhost:3001/login', {
+    const response = await fetch(`${process.env.backend_url}/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -83,7 +84,7 @@ export const getSubjectsFromAPI: () => Promise<SubjectSchedule[]> =
   async () => {
     //const { materias } = materiasResponse as MateriaResponse; //Comentar luego
 
-    const materiasResponse = await fetch("http://localhost:3001/materias", {
+    const materiasResponse = await fetch(`${process.env.backend_url}/materias`, {
       method: "GET"
     });
     const { materias } = await materiasResponse.json() as MateriaResponse;
@@ -117,7 +118,7 @@ export const getAvailableSchedulesForSubject: (
 ) => Promise<Schedule[]> = async (subject_id) => {
   //const { horarios } = horarioMateriaResponse as HorarioMateriaResponse;
 
-  const horarioMateriaResponse = await fetch(`http://localhost:3001/horario/${subject_id}`, {
+  const horarioMateriaResponse = await fetch(`${process.env.backend_url}/horario/${subject_id}`, {
     method: "GET"
   });
   let { horarios } = await horarioMateriaResponse.json() as HorarioMateriaResponse;
@@ -128,7 +129,7 @@ export const getAvailableSchedulesForSubject: (
 export const generatePdf = async (data) => {
   try {
     // Configurar la solicitud
-    const response = await fetch(process.env['backend_url'] + '/generate_pdf', {
+    const response = await fetch(`${process.env.backend_url}/generate_pdf`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -165,7 +166,7 @@ export const generatePdf = async (data) => {
 export const getSemesters: () => Promise<SemesterResponse> = async () => {
   try {
     // Configurar la solicitud
-    const response = await fetch('http://localhost:3001/semestres', {
+    const response = await fetch(`${process.env.backend_url}/semestres`, {
       method: 'GET'
     });
 
@@ -182,7 +183,7 @@ export const sendExcel = async (data) => {
   console.log("SENDING EXCEL")
   try {
     // Configurar la solicitud
-    const response = await fetch('http://localhost:3001/upload_xlsx_new', {
+    const response = await fetch(`${process.env.backend_url}/upload_xlsx_new`, {
       method: 'POST',
       body: data,
     });
