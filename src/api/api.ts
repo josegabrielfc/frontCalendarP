@@ -35,7 +35,7 @@ interface RegisterLoginResponse {
   redirect?: string;
 }
 
-const url = "";
+require('dotenv').config();
 
 export const registerUser: (userData: UserData) => Promise<RegisterLoginResponse> = async (userData) => {
   try {
