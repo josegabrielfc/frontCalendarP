@@ -8,6 +8,8 @@ import imagenes from "../assets/imagenes.js";
 const Home: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
   const [selectedDate, setSelectedDate] = useState<string>("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [selectWay, setSelectWay] = useState<string>("");
   const [fileName, setFileName] = useState<string>(
     "Ningún archivo seleccionado"
@@ -28,6 +30,16 @@ const Home: React.FC = () => {
 
   const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedDate(event.target.value);
+  };
+
+  const handleStartDateChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setStartDate(event.target.value);
+  };
+
+  const handleEndDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setEndDate(event.target.value);
   };
 
   const handleSelectWay = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -62,62 +74,71 @@ const Home: React.FC = () => {
   };
 
   return (
-      <div className="container">
-        <div className="header-container">
-          <img src={imagenes.header} alt="Header" />
-        </div>
-        <h1>UFPS CALENDAR</h1>
-        <div className="my-form-container">
-          <h2>Ingrese los siguientes datos</h2>
-          <form className="my-form" onSubmit={handleSubmit}>
-            <div>
-              <input
-                type="file"
-                className="fancy-file red"
-                id="archivo"
-                onChange={handleFileChange}
-                accept=".xlsx"
-                data-button="Examinar"
-                data-empty="Sin archivos"
-              ></input>
-              <label htmlFor="archivo">
-                <span className="fancy-file__fancy-file-name">{fileName}</span>
-                <span className="fancy-file__fancy-file-button">
-                  Buscar archivo
-                </span>
-              </label>
-            </div>
-            <br></br>
-            <div className="form-group">
-              <label>
-                Seleccionar Fecha:
-                <input
-                  type="date"
-                  value={selectedDate}
-                  onChange={handleDateChange}
-                />
-              </label>
-            </div>
-            <br></br>
-            <div className="form-group">
-              <label htmlFor="lang">
-                Seleccione como desea generar su Calendario
-              </label>
-              <div className="content-select">
-                <select name="opciones" id="lang" onChange={handleSelectWay}>
-                  <option value="">-</option>
-                  <option value="manual">Manual</option>
-                  <option value="auto">Automatico</option>
-                </select>
-                <i></i>
-              </div>
-            </div>
-            <div className="form-group">
-              <button type="submit">Submit</button>
-            </div>
-          </form>
-        </div>
+    <div className="container">
+      <div className="header-container">
+        <img src={imagenes.header} alt="Header" />
       </div>
+      <h1>UFPS CALENDAR</h1>
+      <div className="my-form-container">
+        <h2>Ingrese los siguientes datos</h2>
+        <form className="my-form" onSubmit={handleSubmit}>
+          <div>
+            <input
+              type="file"
+              className="fancy-file red"
+              id="archivo"
+              onChange={handleFileChange}
+              accept=".xlsx"
+              data-button="Examinar"
+              data-empty="Sin archivos"
+            ></input>
+            <label htmlFor="archivo">
+              <span className="fancy-file__fancy-file-name">{fileName}</span>
+              <span className="fancy-file__fancy-file-button">
+                Buscar archivo
+              </span>
+            </label>
+          </div>
+          <br></br>
+          <div className="date-group">
+            <div className="form-group">
+              <label>Fecha de inicio:</label>
+              <input
+                type="date"
+                value={startDate}
+                onChange={handleStartDateChange}
+              />
+            </div>
+            <div className="form-group">
+              <label>Fecha de fin:</label>
+              <input
+                type="date"
+                value={endDate}
+                onChange={handleEndDateChange}
+              />
+            </div>
+          </div>
+          <br></br>
+
+          <div className="form-group">
+            <label htmlFor="lang">
+              Seleccione como desea generar su Calendario
+            </label>
+            <div className="content-select">
+              <select name="opciones" id="lang" onChange={handleSelectWay}>
+                <option value="">-</option>
+                <option value="manual">Manual</option>
+                <option value="auto">Automatico</option>
+              </select>
+              <i></i>
+            </div>
+          </div>
+          <div className="form-group">
+            <button type="submit">Submit</button>
+          </div>
+        </form>
+      </div>
+    </div>
   );
 };
 

@@ -22,6 +22,7 @@ const SignUp: React.FC<Props> = ({
     name: "",
     email: "",
     password: "",
+    repeatPassword: "",
   });
   const navigate = useNavigate();
   const goToAnotherPage = (str) => {
@@ -47,9 +48,12 @@ const SignUp: React.FC<Props> = ({
       if (
         userData.name === "" ||
         userData.email === "" ||
-        userData.password === ""
+        userData.password === "" ||
+        userData.repeatPassword === ""
       ) {
         alert("Todos los campos son necesarios");
+      } else if (userData.password !== userData.repeatPassword) {
+        alert("Las contraseñas deben coincidir");
       } else {
         const registro = await registerUser(userData);
         alert("Se ha agregado satisfactoriamente el usuario");
@@ -95,6 +99,15 @@ const SignUp: React.FC<Props> = ({
             placeholder="Contraseña"
             value={userData.password}
             onChange={(e) => handleInputChange(e, "password")}
+          />
+        </div>
+        <div className="input">
+          <img src={passwordIcon} alt="Password" />
+          <input
+            type="password"
+            placeholder="Repetir Contraseña"
+            value={userData.repeatPassword}
+            onChange={(e) => handleInputChange(e, "repeatPassword")}
           />
         </div>
       </div>
