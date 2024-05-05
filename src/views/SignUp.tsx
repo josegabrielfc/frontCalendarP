@@ -56,9 +56,13 @@ const SignUp: React.FC<Props> = ({
         alert("Las contraseñas deben coincidir");
       } else {
         const registro = await registerUser(userData);
-        alert("Se ha agregado satisfactoriamente el usuario");
-        console.log(registro);
-        goToAnotherPage("/");
+        if (registro.status === "Email_Error") {
+          alert("El correo electrónico ya está registrado. Por favor, utiliza otro correo electrónico.");
+        } else {
+          alert("Se ha agregado satisfactoriamente el usuario");
+          console.log(registro);
+          goToAnotherPage("/");
+        }
       }
     } catch (error) {
       console.error("Error al registrar usuario:", error);
