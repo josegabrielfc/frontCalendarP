@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getSemesters, getSubjectsFromAPI } from "../api/api";
+import { getSemesters, getAutoSubjectsFromAPI } from "../api/api";
 import {
   Schedule,
   Subject,
@@ -17,29 +17,43 @@ import { useNavigate } from "react-router-dom";
 
 
 const AvailableSubjectsWeekCalendar: React.FC = () => {
-  const { firstWeek } = useSubject();
+  const { addFirstWeek, firstWeek } = useSubject();
   const [events, setEvents] = useState([]);
-
   useEffect(() => {
-    const newEvents = [];
-    firstWeek.forEach((subject) => {
-      subject.schedules.forEach((schedule) => {
-        const startHourString =
-          typeof schedule.hora_inicio === "string" ? schedule.hora_inicio : "";
-        const endHourString =
-          typeof schedule.hora_fin === "string" ? schedule.hora_fin : "";
+    let total = 0
 
-        newEvents.push({
-          title: subject.name,
-          day: schedule.dia,
-          startHour: parseInt(startHourString.split(":")[0], 10),
-          endHour: parseInt(endHourString.split(":")[0], 10),
-          description: "Grupo " + schedule.grupo_id,
+    const response = getAutoSubjectsFromAPI()
+    response.then( data => {
+      const newEvents = [];
+      const newRecords = [];
+      data.forEach((subject) => {
+        total += subject.schedules.length
+        const schedules = [];
+        subject.schedules.slice(0, subject.schedules.length / 2).forEach((schedule) => {
+          schedules.push(schedule)
+          const startHourString =
+            typeof schedule.hora_inicio === "string"
+              ? schedule.hora_inicio
+              : "";
+          const endHourString =
+            typeof schedule.hora_fin === "string" ? schedule.hora_fin : "";
+
+          newEvents.push({
+            title: subject.name,
+            day: schedule.dia,
+            startHour: parseInt(startHourString.split(":")[0], 10),
+            endHour: parseInt(endHourString.split(":")[0], 10),
+            description: "Grupo " + schedule.grupo_id,
+          });
         });
+        newRecords.push([subject, schedules])
       });
-    });
-    setEvents(newEvents);
-  }, [firstWeek]);
+      
+      addFirstWeek(newRecords)
+      console.log("First Week", total, " vs ", newEvents.length)
+      setEvents(newEvents);
+    })
+  }, []);
 
   return <CalendarWeekView events={events} />;
 };

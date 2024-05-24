@@ -1,5 +1,6 @@
 import React from 'react';
 import './../styles/calendar.css';
+import { useSubject } from "../context/ScheduleContext";
 
 const daysOfWeek1 = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'];
 const daysOfWeek2 = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'];
@@ -12,9 +13,20 @@ export function convertHourToInterval(hour) {
   return `${start} - ${end}`;
 }
 
+const convertDay = (day, initialDate, holidays) => {
+  let fecha = new Date(initialDate);
+
+  console.log(holidays)
+
+  fecha.setDate(fecha.getDate() + (daysOfWeek1.indexOf(day) + 1) % 7);
+  
+
+  return fecha.toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "short" });
+}
+
 const CalendarWeekView = ({ events }) => {
 
-  
+  const {initialDate, holidays} = useSubject();
   const newEvents = processEvents(events);
   // Crear una cuadrícula para las horas y los días
   const renderGrid = () => {
@@ -25,7 +37,7 @@ const CalendarWeekView = ({ events }) => {
           <tr>
             <th>Hora</th>
             {daysOfWeek1.map((day) => (
-              <th key={day}>{day}</th>
+              <th key={day}>{convertDay(day, initialDate, holidays)}</th>
             ))}
           </tr>
         </thead>
@@ -52,7 +64,7 @@ const CalendarWeekView = ({ events }) => {
       : undefined;
     return events
       ? events.map((event) => (
-          <div className="event" key={`${event.title}-${event.startHour}`}>
+          <div className="event" key={`${event.title}-${event.startHour}-${event.description}`}>
             {event.title}{' '}
             {event.description && <span> - {event.description}</span>}
           </div>

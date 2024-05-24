@@ -4,8 +4,10 @@ import "./../styles/home.css";
 import "./../styles/fancyFile.css";
 import { registerUser, sendExcel } from "../api/api";
 import imagenes from "../assets/imagenes.js";
+import { useSubject } from "../context/ScheduleContext";
 
 const Home: React.FC = () => {
+  const { setInitialDate, setHolidays } = useSubject();
   const [file, setFile] = useState<File | null>(null);
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [startDate, setStartDate] = useState("");
@@ -15,11 +17,28 @@ const Home: React.FC = () => {
     "Ningún archivo seleccionado"
   );
   const navigate = useNavigate(); // Utiliza useNavigate para la navegación
+
+  /*useEffect(() => {
+    const getHolidays = async () => {
+      return await fetch(
+        "https://holidayapi.com/v1/holidays?country=CO&year=2023&pretty&key=f7ff3e8b-0a5f-404a-b5ef-a83d6e92bb20",
+        {
+          method: "GET",
+          mode: "no-cors",
+        }
+      ).then((response) => {
+        console.log(response.json())
+        setHolidays(response)
+      });
+    };
+
+    getHolidays()
+  }, []);*/
+
   const goToAnotherPage = () => {
     navigate(`/select/week1/${selectWay}`);
   };
 
-  console.log(selectedDate);
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files && event.target.files[0];
     setFile(selectedFile || null);
@@ -52,6 +71,8 @@ const Home: React.FC = () => {
     try {
       const formData = new FormData();
       formData.append("fecha", selectedDate);
+
+      setInitialDate(new Date(selectedDate));
 
       if (file) {
         formData.append("calendario", file);
