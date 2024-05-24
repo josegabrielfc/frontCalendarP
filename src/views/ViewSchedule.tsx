@@ -43,6 +43,13 @@ const ViewSchedule: FC<{ name: string }> = ({ name }) => {
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    document.body.classList.add("bodyC");
+    return () => {
+      document.body.classList.remove("bodyC");
+    };
+  }, []);
+
   const goToAnotherPage = () => {
     navigate('/home/report');
   };
@@ -51,15 +58,20 @@ const ViewSchedule: FC<{ name: string }> = ({ name }) => {
     <>
       <div ref={calendarRef}>
         <h2> Horarios establecidad para la primera semana </h2>
+        <div className="calendar">
         <AvailableSubjectsWeekCalendar subjects={firstWeek} />
+        </div>
         <h2> Horarios establecidad para la segunda semana </h2>
+        <div className="calendar">
         <AvailableSubjectsWeekCalendar subjects={secondWeek} />
+        </div>
       </div>
       <div className="button-wrapper">
       <button className="next-page" onClick={goToAnotherPage}>
         Visualizar PDF
       </button>
       </div>
+      <br></br>
     </>
   );
 };

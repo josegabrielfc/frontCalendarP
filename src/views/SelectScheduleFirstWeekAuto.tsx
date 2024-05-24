@@ -62,6 +62,13 @@ const SelectScheduleFirstWeek: React.FC = () => {
   const navigate = useNavigate();
   const [randomizer, setRandomizer] = useState(false);
 
+  useEffect(() => {
+    document.body.classList.add("bodyC");
+    return () => {
+      document.body.classList.remove("bodyC");
+    };
+  }, []);
+
   const handleRandomize = () => {
     setRandomizer(true)
     setTimeout(() => goToAnotherPage(), 1000);
@@ -78,13 +85,11 @@ const SelectScheduleFirstWeek: React.FC = () => {
       <AvailableSubjectsWeekCalendar />
       </div>
       <div className="button-wrapper">
-        <button className="next-page" onClick={handleRandomize}>
-          Generar aleatorio
-        </button>
         <button className="next-page" onClick={goToAnotherPage}>
           Siguiente semana
         </button>
       </div>
+      <br></br>
     </>
   );
 };

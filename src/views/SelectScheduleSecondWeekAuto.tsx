@@ -91,12 +91,15 @@ const SelectScheduleSecondWeek: React.FC = () => {
     <>
       <h2> Estas son las materias disponibles: </h2>
       <h2> El horario generado para la segunda semana es </h2>
+      <div className="calendar">
       <AvailableSubjectsWeekCalendar />
+      </div>
       <div className="button-wrapper">
         <button className="next-page" onClick={goToAnotherPage}>
           Ir a horario
         </button>
       </div>
+      <br></br>
     </>
   );
 };

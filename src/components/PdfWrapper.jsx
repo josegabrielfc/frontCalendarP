@@ -112,7 +112,7 @@ const PdfWrapper = () => {
         <br />
         <h4>
           POR LA CUAL SE PROGRAMAN LAS FECHAS DE EXÁMENES FINALES DEL PLAN DE
-          ESTUDIOS DE INGENIERÍA DE SISTEMAS, CORRESPONDIENTES AL SEMESTRE 2023
+          ESTUDIOS DE INGENIERÍA DE SISTEMAS, CORRESPONDIENTES  AL SEMESTRE 2023
           - 2.
         </h4>
         <p>
@@ -135,6 +135,7 @@ const PdfWrapper = () => {
           Descargar PDF
         </button>
       </div>
+      <br></br>
     </div>
   );
 };

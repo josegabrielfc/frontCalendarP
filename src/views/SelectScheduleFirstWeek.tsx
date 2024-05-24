@@ -17,23 +17,20 @@ import { useNavigate } from "react-router-dom";
 
 const AvailableSubjectsTable: React.FC<{randomize: boolean}> = ({ randomize }) => {
   const { addSubjectFirstWeek: addSubject, firstWeek: subjects } = useSubject();
-  // const [availableSubjects, setAvailableSubjects] = useState<SubjectSchedule[]>(
-  //   []
-  // );
   const [availableSubjectsBySemester, setAvailableSubjectsBySemester] =
     useState<SubjectsBySemester[]>([]);
   const [availableSubjects, setAvailableSubjects] = useState<
     (SubjectSchedule | ParentSubject)[]
   >([]);
+  const [selectedSemesterId, setSelectedSemesterId] = useState("");
   const [openSubjectId, setOpenSubjectId] = useState(null);
-  const [openSemesterId, setOpenSemesterId] = useState(null);
 
   const toggleSubject = (subjectId) => {
     setOpenSubjectId(openSubjectId === subjectId ? null : subjectId);
   };
 
-  const toggleSemester = (semesterId) => {
-    setOpenSemesterId(openSemesterId === semesterId ? null : semesterId);
+  const handleSemesterChange = (event) => {
+    setSelectedSemesterId(event.target.value);
   };
 
   useEffect(() => {
@@ -80,7 +77,6 @@ const AvailableSubjectsTable: React.FC<{randomize: boolean}> = ({ randomize }) =
         }
       } catch (error) {
         console.error("Error fetching available subjects:", error);
-        // Handle errors appropriately
       }
     };
 
@@ -96,65 +92,68 @@ const AvailableSubjectsTable: React.FC<{randomize: boolean}> = ({ randomize }) =
 
   return (
     <div className="big-container">
-      {availableSubjectsBySemester.map((semester, key) => {
-        return (
-          <div className="semester-row" key={key}>
-            <button
-              className="semester-name"
-              onClick={() => toggleSemester(semester.id)}
-            >
+      <div className="semester-dropdown">
+        <select value={selectedSemesterId} onChange={handleSemesterChange}>
+          <option value="" disabled>
+            Selecciona un semestre
+          </option>
+          {availableSubjectsBySemester.map((semester) => (
+            <option key={semester.id} value={semester.id}>
               SEMESTRE {semester.id}
-            </button>
-            {openSemesterId === semester.id && (
-              <div className="subjects-container">
-                {semester.subjects.map((subject) => (
-                  <div key={subject.id} className="subject-container">
-                    <button
-                      className="subject-name"
-                      onClick={() => toggleSubject(subject.id)}
-                    >
-                      {subject.name}
-                    </button>
+            </option>
+          ))}
+        </select>
+      </div>
+      {selectedSemesterId && (
+        <div className="subjects-container">
+          {availableSubjectsBySemester
+            .find((semester) => semester.id === selectedSemesterId)
+            .subjects.map((subject) => (
+              <div key={subject.id} className="subject-container">
+                <button
+                  className="subject-name"
+                  onClick={() => toggleSubject(subject.id)}
+                >
+                  {subject.name}
+                </button>
+                {openSubjectId === subject.id && (
+                  <div className="schedule-container">
+                    {subject.schedules.map((schedule) => {
+                      const isSelected = subjects.find(
+                        (s) =>
+                          s.id === subject.id &&
+                          s.schedules.has(schedule.grupo_id) &&
+                          s.schedules.get(schedule.grupo_id).id ===
+                            schedule.id
+                      );
 
-                    {openSubjectId === subject.id && (
-                      <div className="schedule-container">
-                        {subject.schedules.map((schedule) => {
-                          const isSelected = subjects.find(
-                            (s) =>
-                              s.id === subject.id &&
-                              s.schedules.has(schedule.grupo_id) &&
-                              s.schedules.get(schedule.grupo_id).id ===
-                                schedule.id
-                          );
-
-                          return (
-                            <div
-                              key={schedule.id}
-                              className={
-                                "schedule" + (isSelected ? " selected" : "")
-                              }
-                              onClick={() => selectSchedule(subject, schedule)}
-                            >
-                              <div>Codigo: {subject.id}</div>
-                              <div>Grupo: {schedule.grupo_id}</div>
-                              <div>Dia: {schedule.dia}</div>
-                              <div>
-                                Hora Inicio: {schedule.hora_inicio as any}
-                              </div>
-                              <div>Hora Fin: {schedule.hora_fin as any}</div>
-                              <div>Salon: {schedule.salon}</div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
+                      return (
+                        <div
+                          key={schedule.id}
+                          className={
+                            "schedule" + (isSelected ? " selected" : "")
+                          }
+                          onClick={() =>
+                            selectSchedule(subject, schedule)
+                          }
+                        >
+                          <div>Codigo: {subject.id}</div>
+                          <div>Grupo: {schedule.grupo_id}</div>
+                          <div>Dia: {schedule.dia}</div>
+                          <div>
+                            Hora Inicio: {schedule.hora_inicio as any}
+                          </div>
+                          <div>Hora Fin: {schedule.hora_fin as any}</div>
+                          <div>Salon: {schedule.salon}</div>
+                        </div>
+                      );
+                    })}
                   </div>
-                ))}
+                )}
               </div>
-            )}
-          </div>
-        );
-      })}
+            ))}
+        </div>
+      )}
     </div>
   );
 };
@@ -191,10 +190,12 @@ const SelectScheduleFirstWeek: React.FC = () => {
   const navigate = useNavigate();
   const [randomizer, setRandomizer] = useState(false);
 
-  const handleRandomize = () => {
-    setRandomizer(true)
-    setTimeout(() => goToAnotherPage(), 1000);
-  }
+  useEffect(() => {
+    document.body.classList.add("bodyC");
+    return () => {
+      document.body.classList.remove("bodyC");
+    };
+  }, []);
 
   const goToAnotherPage = () => {
     navigate("/select/week2/manual");
@@ -204,18 +205,18 @@ const SelectScheduleFirstWeek: React.FC = () => {
     <>
       <h2> Estas son las materias disponibles: </h2>
       <AvailableSubjectsTable randomize={randomizer}/>
+      <br></br>
       <h2> El horario generado para la primera semana es </h2>
+      <br></br>
       <div className="calendar">
       <AvailableSubjectsWeekCalendar />
       </div>
       <div className="button-wrapper">
-        <button className="next-page" onClick={handleRandomize}>
-          Generar aleatorio
-        </button>
         <button className="next-page" onClick={goToAnotherPage}>
           Siguiente semana
         </button>
       </div>
+      <br></br>
     </>
   );
 };

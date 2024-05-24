@@ -96,10 +96,13 @@ const getRandomSchedule: () => Promise<HorarioMateriaResponse> = async () => {
 export const getAutoSubjectsFromAPI: () => Promise<SubjectSchedule[]> =
   async () => {
     //const { materias } = materiasResponse as MateriaResponse; //Comentar luego
-    const horarioMateriaResponse = await getRandomSchedule()
+    const horariosValidos = await fetch (`${backendUrl}/horarios_validos`, {
+      method: "GET"
+    });
     const materiasResponse = await fetch(`${backendUrl}/materias`, {
       method: "GET"
     });
+    const horarioMateriaResponse = await getRandomSchedule()
     const { materias } = await materiasResponse.json() as MateriaResponse;
     return mergeSubjectsWithAutoSchedule(materias, horarioMateriaResponse);
   };
