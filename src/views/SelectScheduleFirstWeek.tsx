@@ -40,13 +40,16 @@ const AvailableSubjectsTable: React.FC<{randomize: boolean}> = ({ randomize }) =
     const fetchAvailableSubjects = async () => {
       try {
         const semesters = await getSemesters();
+        console.log("Semesters debug: "+JSON.stringify(semesters, null, 2));
         const subjectsWithSchedules = await getSubjectsFromAPI();
-        subjectsWithSchedules.forEach(
-          (subject) =>
-            (subject.schedules = subject.schedules.sort((a, b) =>
-              a.grupo_id < b.grupo_id ? -1 : 1
-            ))
-        );
+        console.log("Degub: "+ JSON.stringify(subjectsWithSchedules, null, 2));
+        subjectsWithSchedules.forEach((subject) => {
+          subject.schedules = subject.schedules.sort((a, b) =>
+            a.grupo_id < b.grupo_id ? -1 : 1
+          );
+          console.log("Subject after sorting: ", JSON.stringify(subject, null, 2));
+        });
+        
 
         let subjectsBySemester: SubjectsBySemester[] = [];
         Object.entries(semesters.semestres).forEach(([semester, subjects]) => {
@@ -57,14 +60,20 @@ const AvailableSubjectsTable: React.FC<{randomize: boolean}> = ({ randomize }) =
           curr.subjects = subjectsWithSchedules.filter((subject) =>
             subjects.some((el) => el.id === subject.id)
           );
+          console.log(`Semester ${semester} subjects:`, JSON.stringify(curr, null, 2));
         });
 
         subjectsBySemester = subjectsBySemester.sort((a, b) =>
           parseInt(a.id) < parseInt(b.id) ? -1 : 1
         );
 
+        console.log("Subjects by Semester after sorting:", JSON.stringify(subjectsBySemester, null, 2));
+
         setAvailableSubjectsBySemester(subjectsBySemester);
         setAvailableSubjects(subjectsWithSchedules);
+
+        console.log("Available Subjects by Semester:", JSON.stringify(subjectsBySemester, null, 2));
+        console.log("Available Subjects:", JSON.stringify(subjectsWithSchedules, null, 2));
 
         if (randomize) {
 

@@ -30,12 +30,12 @@ interface UserData {
 }
 
 interface RegisterLoginResponse {
-  status: string;
+  status: string; 
   message: string;
   redirect?: string;
 }
 
-const backendUrl = "https://calendarp.onrender.com";
+const backendUrl = " http://localhost:3001";
 
 export const registerUser: (userData: UserData) => Promise<RegisterLoginResponse> = async (userData) => {
   try {
@@ -87,8 +87,15 @@ export const getSubjectsFromAPI: () => Promise<SubjectSchedule[]> =
     const materiasResponse = await fetch(`${backendUrl}/materias`, {
       method: "GET"
     });
-    const { materias } = await materiasResponse.json() as MateriaResponse;
 
+    // Espera el resultado de json()
+    const materiasData = await materiasResponse.json();
+    console.log("materias response JSON = ", materiasData);
+
+    // Extrae materias del resultado JSON
+    const { materias } = materiasData as MateriaResponse;
+    console.log("MATERIAS = ", JSON.stringify(materias));
+    
     return mergeSubjectsWithSchedule(materias);
   };
 
@@ -126,7 +133,7 @@ export const getAvailableSchedulesForSubject: (
   return Promise.resolve(horarios);
 };
 
-export const generatePdf = async (data) => {
+/*export const generatePdf = async (data) => {
   try {
     // Configurar la solicitud
     const response = await fetch(`${backendUrl}/generate_pdf`, {
@@ -161,7 +168,7 @@ export const generatePdf = async (data) => {
   } catch (error) {
     console.error('Error al generar el PDF:', error);
   }
-};
+};*/
 
 export const getSemesters: () => Promise<SemesterResponse> = async () => {
   try {
@@ -180,14 +187,14 @@ export const getSemesters: () => Promise<SemesterResponse> = async () => {
 };
 
 export const sendExcel = async (data) => {
-  console.log("SENDING EXCEL")
+  console.log("SENDING EXCEL");
   try {
     // Configurar la solicitud
-    const response = await fetch(`${backendUrl}/upload_xlsx_new`, {
+    const response = await fetch(`${backendUrl}/get_xlsx_data`, {
       method: 'POST',
       body: data,
     });
-
+    console.log(response.body);
     return response;
 
   } catch (error) {

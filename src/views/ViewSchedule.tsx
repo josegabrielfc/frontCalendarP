@@ -7,7 +7,7 @@ import moment from 'moment';
 import { useSubject } from '../context/ScheduleContext';
 import CalendarWeekView from '../components/CalendarWeekView';
 import { useNavigate } from 'react-router-dom';
-import { generatePdf } from '../api/api';
+//import { generatePdf } from '../api/api';
 import PdfWrapper from './../components/PdfWrapper';
 import { getDates } from './../backend';
 import html2canvas from 'html2canvas';
