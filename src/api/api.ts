@@ -35,7 +35,7 @@ interface RegisterLoginResponse {
   redirect?: string;
 }
 
-const backendUrl = " http://localhost:3001";
+const backendUrl = "https://calendarp.onrender.com";
 
 export const registerUser: (userData: UserData) => Promise<RegisterLoginResponse> = async (userData) => {
   try {
