@@ -1,6 +1,7 @@
 // SubjectContext.tsx
-import React, { createContext, useState, useContext, ReactNode } from 'react';
+import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
 import { Subject, Schedule, SubjectSelectedSchedule } from './../types/types';
+import { getHolidays } from '../api/api';
 
 interface SubjectContextType {
   initialDate: Date;
@@ -24,7 +25,7 @@ export const SubjectProvider: React.FC<SubjectProviderProps> = ({ children }) =>
   const [firstWeek, setFirstWeek] = useState<SubjectSelectedSchedule[]>([]);
   const [secondWeek, setSecondWeek] = useState<SubjectSelectedSchedule[]>([]);
   const [initialDate, setInitialDate] = useState<Date>(null);
-  const [holidays, setHolidays] = useState<any>(null)
+  const [holidays, setHolidays] = useState<string[]>([])
 
   const addSubjectFirstWeek = (subject: Subject, schedule: Schedule) => {
     const updatedSubjects = firstWeek.map((s) => {

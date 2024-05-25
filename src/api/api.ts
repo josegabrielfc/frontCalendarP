@@ -218,3 +218,19 @@ export const sendExcel = async (data) => {
 
   return Promise.resolve(null);
 };
+
+export const getHolidays: () => Promise<string[]> = async () => {
+  try {
+    // Configurar la solicitud
+    const response = fetch('http://localhost:3001/holidays_dates', {
+      method: 'GET'
+    });
+
+    return Promise.resolve(await response.then(data => data.json()).then(data => data.holidayDates) as string[]);
+
+  } catch (error) {
+    console.error('Error al enviar excel:', error);
+  }
+
+  return Promise.resolve(null);
+};

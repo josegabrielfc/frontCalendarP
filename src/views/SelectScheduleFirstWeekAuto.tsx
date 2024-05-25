@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getSemesters, getAutoSubjectsFromAPI } from "../api/api";
+import { getSemesters, getAutoSubjectsFromAPI, getHolidays } from "../api/api";
 import {
   Schedule,
   Subject,
@@ -14,14 +14,15 @@ import { getDatesWeek } from "../backend";
 import moment from "moment";
 import "./../styles/select_schedule.css";
 import { useNavigate } from "react-router-dom";
+import { convertDay } from "../utils/utils";
 
 
 const AvailableSubjectsWeekCalendar: React.FC = () => {
-  const { addFirstWeek, firstWeek } = useSubject();
+  const { initialDate, addFirstWeek, holidays } = useSubject();
   const [events, setEvents] = useState([]);
   useEffect(() => {
     let total = 0
-
+    console.log(holidays )
     const response = getAutoSubjectsFromAPI()
     response.then( data => {
       const newEvents = [];
@@ -40,7 +41,7 @@ const AvailableSubjectsWeekCalendar: React.FC = () => {
 
           newEvents.push({
             title: subject.name,
-            day: schedule.dia,
+            day: convertDay(schedule.dia, initialDate, holidays),
             startHour: parseInt(startHourString.split(":")[0], 10),
             endHour: parseInt(endHourString.split(":")[0], 10),
             description: "Grupo " + schedule.grupo_id,
@@ -50,7 +51,7 @@ const AvailableSubjectsWeekCalendar: React.FC = () => {
       });
       
       addFirstWeek(newRecords)
-      console.log("First Week", total, " vs ", newEvents.length)
+      console.log(newEvents)
       setEvents(newEvents);
     })
   }, []);

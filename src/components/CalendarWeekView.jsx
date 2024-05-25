@@ -3,7 +3,6 @@ import './../styles/calendar.css';
 import { useSubject } from "../context/ScheduleContext";
 
 const daysOfWeek1 = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'];
-const daysOfWeek2 = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'];
 
 export function convertHourToInterval(hour) {
   // Convertir la hora a un formato de 24 horas
@@ -11,17 +10,6 @@ export function convertHourToInterval(hour) {
   let end = (hour + 1).toString().padStart(2, '0') + ':00';
 
   return `${start} - ${end}`;
-}
-
-const convertDay = (day, initialDate, holidays) => {
-  let fecha = new Date(initialDate);
-
-  console.log(holidays)
-
-  fecha.setDate(fecha.getDate() + (daysOfWeek1.indexOf(day) + 1) % 7);
-  
-
-  return fecha.toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "short" });
 }
 
 const CalendarWeekView = ({ events }) => {
@@ -37,8 +25,8 @@ const CalendarWeekView = ({ events }) => {
           <tr>
             <th>Hora</th>
             {daysOfWeek1.map((day) => (
-              <th key={day}>{convertDay(day, initialDate, holidays)}</th>
-            ))}
+              <th key={day}>{day}</th>
+            ))} 
           </tr>
         </thead>
         <tbody>
