@@ -57,9 +57,8 @@ const Home: React.FC = () => {
 
     try {
       const formData = new FormData();
-      formData.append("fecha", selectedDate);
-
-      setInitialDate(new Date(selectedDate));
+      formData.append("fecha", startDate);
+      setInitialDate(new Date(startDate.replaceAll("-", "/")));
 
       if (file) {
         formData.append("calendario", file);

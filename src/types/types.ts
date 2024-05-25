@@ -4,6 +4,8 @@ export interface Schedule {
   materia_id: number;
   grupo_id: string;
   dia: string;
+  calendarDay?: string;
+  formatDay?: string;
   hora_inicio: Date;
   hora_fin: Date;
   salon: string;

@@ -1,6 +1,7 @@
 import React from 'react';
 import './../styles/calendar.css';
 import { useSubject } from "../context/ScheduleContext";
+import { getIndexedDate } from '../utils/utils';
 
 const daysOfWeek1 = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'];
 
@@ -12,20 +13,18 @@ export function convertHourToInterval(hour) {
   return `${start} - ${end}`;
 }
 
-const CalendarWeekView = ({ events }) => {
-
-  const {initialDate, holidays} = useSubject();
+const CalendarWeekView = ({ events, initialDate }) => {
   const newEvents = processEvents(events);
   // Crear una cuadrícula para las horas y los días
   const renderGrid = () => {
     const hours = Array.from({ length: 14 }, (_, i) => i + 6); // Ejemplo: de 6 a 20 horas
-    return (
+    return ( 
       <table>
         <thead>
           <tr>
             <th>Hora</th>
-            {daysOfWeek1.map((day) => (
-              <th key={day}>{day}</th>
+            {daysOfWeek1.map((day, index) => (
+              <th key={day}>{getIndexedDate(initialDate, index)}</th>
             ))} 
           </tr>
         </thead>
@@ -90,7 +89,7 @@ const processEvents = (events) => {
       if (!finalMapper[day][event.startHour])
         finalMapper[day][event.startHour] = [];
 
-      finalMapper[day.toUpperCase()][event.startHour].push(event);
+      finalMapper[day][event.startHour].push(event); 
     });
   });
 

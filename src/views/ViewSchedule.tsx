@@ -14,7 +14,7 @@ import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 
 
-const AvailableSubjectsWeekCalendar: React.FC<{ subjects: any[] }> = ({  subjects }) => {
+const AvailableSubjectsWeekCalendar: React.FC<{ subjects: any[], initialDate: any }> = ({  subjects, initialDate }) => {
   const [events, setEvents] = useState([]);
 
   useEffect(() => {
@@ -34,12 +34,12 @@ const AvailableSubjectsWeekCalendar: React.FC<{ subjects: any[] }> = ({  subject
     setEvents(newEvents);
   }, [subjects]);
 
-  return <CalendarWeekView events={events} />;
+  return <CalendarWeekView events={events} initialDate={initialDate} />;
 };
 
 const ViewSchedule: FC<{ name: string }> = ({ name }) => {
   const calendarRef = useRef();
-  const { firstWeek, secondWeek } = useSubject();
+  const { firstWeek, secondWeek, initialDate, secondInitialDate } = useSubject();
 
   const navigate = useNavigate();
 
@@ -59,11 +59,11 @@ const ViewSchedule: FC<{ name: string }> = ({ name }) => {
       <div ref={calendarRef}>
         <h2> Horarios establecidad para la primera semana </h2>
         <div className="calendar">
-        <AvailableSubjectsWeekCalendar subjects={firstWeek} />
+        <AvailableSubjectsWeekCalendar subjects={firstWeek} initialDate={initialDate}/>
         </div>
         <h2> Horarios establecidad para la segunda semana </h2>
         <div className="calendar">
-        <AvailableSubjectsWeekCalendar subjects={secondWeek} />
+        <AvailableSubjectsWeekCalendar subjects={secondWeek} initialDate={secondInitialDate}/>
         </div>
       </div>
       <div className="button-wrapper">

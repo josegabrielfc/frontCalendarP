@@ -64,7 +64,7 @@ const PdfWrapper = () => {
                       {subject.id}-{schedule.grupo_id}
                     </td>
                     <td>{subject.name}</td>
-                    <td className="letter-spacing">14/12/2023</td>
+                    <td className="letter-spacing">{schedule.formatDay.toISOString().split('T')[0].replace(/-/g, '/')}</td>
                     <td className="letter-spacing">{schedule.hora_inicio} - {schedule.hora_fin} {schedule.salon}</td>
                   </tr>
                 ))
@@ -89,7 +89,7 @@ const PdfWrapper = () => {
                       {subject.id}-{schedule.grupo_id}
                     </td>
                     <td>{subject.name}</td>
-                    <td className="letter-spacing">14/12/2023</td>
+                    <td className="letter-spacing">{schedule.formatDay.toISOString().split('T')[0].replace(/-/g, '/')}</td>
                     <td className="letter-spacing">{schedule.hora_inicio} - {schedule.hora_fin} {schedule.salon}</td>
                   </tr>
                 ))

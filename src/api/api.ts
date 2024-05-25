@@ -222,7 +222,7 @@ export const sendExcel = async (data) => {
 export const getHolidays: () => Promise<string[]> = async () => {
   try {
     // Configurar la solicitud
-    const response = fetch('http://localhost:3001/holidays_dates', {
+    const response = fetch(`${backendUrl}/holidays_dates`, {
       method: 'GET'
     });
 
