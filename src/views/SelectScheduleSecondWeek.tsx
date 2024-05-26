@@ -7,6 +7,7 @@ import CalendarWeekView from './../components/CalendarWeekView';
 import { getDatesWeek } from './../backend';
 import moment from 'moment';
 import './../styles/select_schedule.css';
+import { legibleDate, convertDay, getInitialDate, isInCurrentWeek, getStartWeekDate } from "../utils/utils";
 import { useNavigate } from 'react-router-dom';
 
 const AvailableSubjectsTable: React.FC = () => {
@@ -161,13 +162,32 @@ const AvailableSubjectsTable: React.FC = () => {
 };
 
 const AvailableSubjectsWeekCalendar: React.FC = () => {
-  const { secondWeek } = useSubject();
+  const {
+    addSecondWeek,
+    insertNewFirstWeek,
+    secondWeek,
+    firstWeek,
+    initialDate,
+    secondInitialDate,
+    holidays
+  } = useSubject();
   const [events, setEvents] = useState([]);
 
   useEffect(() => {
     const newEvents = [];
+    const firstWeekRecords = [];
+    const secondWeekRecords = [];
     secondWeek.forEach((subject) => {
+      const schedulesFirstWeek = [];
+      const schedulesSecondWeek = [];
       subject.schedules.forEach((schedule) => {
+        if (!isInCurrentWeek(secondInitialDate, schedule.dia, holidays)) {
+          schedulesFirstWeek.push(schedule);
+          schedule.calendarDay =  legibleDate(convertDay(schedule.dia, initialDate, holidays));
+          schedule.formatDay =  convertDay(schedule.dia, initialDate, holidays)
+          return;
+        }
+        schedulesSecondWeek.push(schedule)
         const startHourString = typeof schedule.hora_inicio === "string" ? schedule.hora_inicio : "";
         const endHourString = typeof schedule.hora_fin === "string" ? schedule.hora_fin : "";
         newEvents.push({
@@ -177,13 +197,18 @@ const AvailableSubjectsWeekCalendar: React.FC = () => {
           endHour: parseInt(endHourString.split(':')[0], 10),
           description: 'Grupo ' + schedule.grupo_id,
         });
+        schedule.calendarDay =  legibleDate(convertDay(schedule.dia, secondInitialDate, holidays));
+        schedule.formatDay =  convertDay(schedule.dia, secondInitialDate, holidays)
       });
+      firstWeekRecords.push([subject, schedulesFirstWeek])
+      secondWeekRecords.push([subject, schedulesSecondWeek])
     });
-
+    insertNewFirstWeek(firstWeekRecords)
+    addSecondWeek(secondWeekRecords)  
     setEvents(newEvents);
   }, [secondWeek]);
 
-  return <CalendarWeekView events={events} />;
+  return <CalendarWeekView events={events} initialDate={secondInitialDate} />;
 };
 
 const SelectScheduleSecondWeek: React.FC = () => {

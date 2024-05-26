@@ -14,6 +14,7 @@ import { getDatesWeek } from "./../backend";
 import moment from "moment";
 import "./../styles/select_schedule.css";
 import { useNavigate } from "react-router-dom";
+import { legibleDate, convertDay, getInitialDate, isInCurrentWeek, getStartWeekDate } from "../utils/utils";
 
 const AvailableSubjectsTable: React.FC<{randomize: boolean}> = ({ randomize }) => {
   const { addSubjectFirstWeek: addSubject, firstWeek: subjects } = useSubject();
@@ -37,14 +38,11 @@ const AvailableSubjectsTable: React.FC<{randomize: boolean}> = ({ randomize }) =
     const fetchAvailableSubjects = async () => {
       try {
         const semesters = await getSemesters();
-        console.log("Semesters debug: "+JSON.stringify(semesters, null, 2));
         const subjectsWithSchedules = await getSubjectsFromAPI();
-        console.log("Degub: "+ JSON.stringify(subjectsWithSchedules, null, 2));
         subjectsWithSchedules.forEach((subject) => {
           subject.schedules = subject.schedules.sort((a, b) =>
             a.grupo_id < b.grupo_id ? -1 : 1
           );
-          console.log("Subject after sorting: ", JSON.stringify(subject, null, 2));
         });
         
 
@@ -57,21 +55,15 @@ const AvailableSubjectsTable: React.FC<{randomize: boolean}> = ({ randomize }) =
           curr.subjects = subjectsWithSchedules.filter((subject) =>
             subjects.some((el) => el.id === subject.id)
           );
-          console.log(`Semester ${semester} subjects:`, JSON.stringify(curr, null, 2));
         });
 
         subjectsBySemester = subjectsBySemester.sort((a, b) =>
           parseInt(a.id) < parseInt(b.id) ? -1 : 1
         );
 
-        console.log("Subjects by Semester after sorting:", JSON.stringify(subjectsBySemester, null, 2));
 
         setAvailableSubjectsBySemester(subjectsBySemester);
         setAvailableSubjects(subjectsWithSchedules);
-
-        console.log("Available Subjects by Semester:", JSON.stringify(subjectsBySemester, null, 2));
-        console.log("Available Subjects:", JSON.stringify(subjectsWithSchedules, null, 2));
-
         if (randomize) {
 
         }
@@ -159,11 +151,12 @@ const AvailableSubjectsTable: React.FC<{randomize: boolean}> = ({ randomize }) =
 };
 
 const AvailableSubjectsWeekCalendar: React.FC = () => {
-  const { firstWeek } = useSubject();
+  const { firstWeek, initialDate, setInitialDate, setSecondInitialDate, holidays } = useSubject();
   const [events, setEvents] = useState([]);
 
   useEffect(() => {
     const newEvents = [];
+    const selectedDate = getInitialDate(initialDate, holidays)
     firstWeek.forEach((subject) => {
       subject.schedules.forEach((schedule) => {
         const startHourString =
@@ -178,12 +171,18 @@ const AvailableSubjectsWeekCalendar: React.FC = () => {
           endHour: parseInt(endHourString.split(":")[0], 10),
           description: "Grupo " + schedule.grupo_id,
         });
+        schedule.calendarDay =  legibleDate(convertDay(schedule.dia, selectedDate, holidays));
+        schedule.formatDay =  convertDay(schedule.dia, selectedDate, holidays)
       });
     });
     setEvents(newEvents);
+    setInitialDate(selectedDate)
+    const newDate = new Date(selectedDate)
+    newDate.setDate((7 - selectedDate.getDay()) + selectedDate.getDate() + 1) 
+    setSecondInitialDate(newDate)
   }, [firstWeek]);
 
-  return <CalendarWeekView events={events} />;
+  return <CalendarWeekView events={events} initialDate={initialDate} />;
 };
 
 const SelectScheduleFirstWeek: React.FC = () => {
