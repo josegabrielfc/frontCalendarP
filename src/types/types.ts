@@ -9,6 +9,7 @@ export interface Schedule {
   hora_inicio: Date;
   hora_fin: Date;
   salon: string;
+  name?: string;
 }
 
 export interface Subject {

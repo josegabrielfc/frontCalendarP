@@ -49,6 +49,7 @@ const AvailableSubjectsWeekCalendar: React.FC = () => {
           });
           schedule.calendarDay =  legibleDate(convertDay(schedule.dia, selectedDate, holidays));
           schedule.formatDay =  convertDay(schedule.dia, selectedDate, holidays)
+          schedule.name = subject.name
         });
         newRecords.push([subject, schedules])
       });

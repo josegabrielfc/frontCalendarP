@@ -1,5 +1,7 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { useSubject } from './../context/ScheduleContext';
+import { getSemesters, getSubjectsFromAPI } from "../api/api";
+
 import './../styles/pdf_wrapper.css';
 import Logo from './../assets/logo.jpg';
 import html2canvas from 'html2canvas';
@@ -7,7 +9,41 @@ import jsPDF from 'jspdf';
 
 const PdfWrapper = () => {
   const {firstWeek, secondWeek} = useSubject();
+  const [availableSubjectsBySemester, setAvailableSubjectsBySemester] =
+    useState([]);
   const reportRef = useRef(null)
+
+  useEffect(() => {
+    const fetchAvailableSubjects = async () => {
+      try {
+        const subjects = [...firstWeek, ...secondWeek]
+        const semesters = await getSemesters();
+        let subjectsBySemester = [];
+        Object.entries(semesters.semestres).forEach(([semester, _]) => {
+          const curr = {};
+          curr.id = semester;
+
+          curr.subjects = subjects.filter((subject) =>
+            _.some((el) => el.id === subject.id)
+          ).filter(subject => Array.from(subject.schedules.values()).length > 0)
+          .map(subject => Array.from(subject.schedules.values()))
+          .reduce((acc, el) => [...acc, ...el], [])
+
+          if (curr.subjects.length > 0) 
+            subjectsBySemester.push(curr);
+        });
+
+        subjectsBySemester = subjectsBySemester.sort((a, b) =>
+          parseInt(a.id) < parseInt(b.id) ? -1 : 1
+        );
+
+        setAvailableSubjectsBySemester(subjectsBySemester);
+      } catch (error) {
+        console.error("Error fetching available subjects:", error);
+      }
+    };
+    fetchAvailableSubjects();
+  }, [])
 
   const printDocument = () => {
     //generatePdf(null);
@@ -18,61 +54,38 @@ const PdfWrapper = () => {
           pdf.save('schedule.pdf');
         },
       });
-
-    // const addImageToPdf = (imgData) => {
-    //   const pdf = new jsPDF('p', 'mm', 'a4'); // Ajusta el tamaño del PDF si es necesario
-    //   const imgProps = pdf.getImageProperties(imgData);
-    //   const pdfWidth = pdf.internal.pageSize.getWidth();
-    //   const pdfHeight = pdf.internal.pageSize.getHeight();
-      
-    //   // Calcular la escala para mantener la relación de aspecto de la imagen
-    //   const imgWidth = pdfWidth;
-    //   const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
-    
-    //   // Calcular la posición x,y para centrar la imagen
-    //   const x = 0;
-    //   const y = (pdfHeight - imgHeight) / 2; // Ajusta si también quieres centrar verticalmente
-    
-    //   pdf.addImage(imgData, 'PNG', x, y, imgWidth, imgHeight);
-    //   pdf.save('schedule.pdf');
-    // };
-
-    // html2canvas(reportRef.current).then(canvas => {
-    //   const imgData = canvas.toDataURL('image/png');
-    //   const pdf = new jsPDF({ format: [720, 1080] });
-    //   addImageToPdf(imgData);
-    // });
   };
 
   const renderTable = () => {
     return (
       <div class="center-div" id="tablasContainer">
-        {firstWeek.length > 0 && (
-          <table class="table table-striped">
-            <thead>
-              <tr>
-                <th colspan="4" class="centered">
-                  SEMANA 1
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {firstWeek.map((subject) =>
-                Array.from(subject.schedules.values()).map((schedule) => (
-                  <tr>
-                    <td className="letter-spacingX">
-                      {subject.id}-{schedule.grupo_id}
-                    </td>
-                    <td>{subject.name}</td>
-                    <td className="letter-spacing">{schedule.formatDay.toISOString().split('T')[0].replace(/-/g, '/')}</td>
-                    <td className="letter-spacing">{schedule.hora_inicio} - {schedule.hora_fin} {schedule.salon}</td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        )}
-        {secondWeek.length > 0 && (
+        {availableSubjectsBySemester.length > 0 && availableSubjectsBySemester.map(el => {
+          return (
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th colspan="4" class="centered">
+                    SEMESTRE {el.id}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {el.subjects.map((schedule) => (
+                    <tr>
+                      <td className="letter-spacingX">
+                        {schedule.materia_id}-{schedule.grupo_id}
+                      </td>
+                      <td>{schedule.name}</td>
+                      <td className="letter-spacing">{schedule.formatDay.toISOString().split('T')[0].replace(/-/g, '/')}</td>
+                      <td className="letter-spacing">{schedule.hora_inicio} - {schedule.hora_fin} {schedule.salon}</td>
+                    </tr>
+                  ))
+                }
+              </tbody>
+            </table>
+          )
+        })}
+        {/* {secondWeek.length > 0 && (
           <table class="table table-striped">
             <thead>
               <tr>
@@ -96,7 +109,7 @@ const PdfWrapper = () => {
               )}
             </tbody>
           </table>
-        )}
+        )} */}
       </div>
     );
   };
