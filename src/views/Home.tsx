@@ -16,6 +16,7 @@ const Home: React.FC = () => {
   const [fileName, setFileName] = useState<string>(
     "Ningún archivo seleccionado"
   );
+  const [errors, setErrors] = useState<string[]>([]);
   const navigate = useNavigate(); // Utiliza useNavigate para la navegación
 
   useEffect(() => {
@@ -52,8 +53,57 @@ const Home: React.FC = () => {
     setSelectWay(event.target.value);
   };
 
+  const normalizeDate = (date) => {
+    const normalizedDate = new Date(date);
+    normalizedDate.setHours(0, 0, 0, 0);
+    return normalizedDate;
+  };
+  
+  const validateForm = () => {
+    const newErrors = [];
+    const today = normalizeDate(new Date(new Date().toLocaleString("en-US", { timeZone: "America/Bogota" })));
+    const start = normalizeDate(new Date(startDate));
+    const end = normalizeDate(new Date(endDate));
+    const minimumEndDate = new Date(start);
+    minimumEndDate.setDate(start.getDate() + 12);
+  
+    if (!file) {
+      newErrors.push("No se ha subido ningún archivo");
+    } else if (file && file.type !== "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
+      newErrors.push("Solo se permite archivos tipo excel");
+    }
+  
+    if (!startDate) {
+      newErrors.push("No se ha proporcionado la fecha de inicio");
+    } else if (start < today) {
+      newErrors.push("La fecha de inicio no puede ser antes del día de hoy");
+    }
+  
+    if (!endDate) {
+      newErrors.push("No se ha proporcionado la fecha de fin");
+    } else if (end < start) {
+      newErrors.push("La fecha de fin no puede ser anterior a la fecha de inicio");
+    } else if (end < minimumEndDate) {
+      newErrors.push("El rango de fechas es menor al esperado");
+    }
+  
+    if (!selectWay) {
+      newErrors.push("Se debe elegir una manera para poder generar su calendario");
+    }
+  
+    return newErrors;
+  };
+  
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+
+    const formErrors = validateForm();
+    if (formErrors.length > 0) {
+      setErrors(formErrors);
+      alert(formErrors.join("\n"));
+      return;
+    }
 
     try {
       const formData = new FormData();
@@ -70,7 +120,6 @@ const Home: React.FC = () => {
         const fechasArray = await response;
         console.log("Fechas recibidas:", fechasArray);
 
-        // Después de recibir la respuesta del backend, navega a otra página
         goToAnotherPage();
       } else {
         console.error("Error al enviar la fecha y el archivo al backend");
