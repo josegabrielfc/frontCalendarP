@@ -153,3 +153,51 @@ dos bordes con color y que giramos con transform: rotate(-45deg);
 .content-select:hover i {
   margin-top: 3px;
 }
+
+.form-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 900px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+  background-color: #fff;
+  border-radius: 8px;
+  margin: 20px;
+}
+
+.form-wrapper form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.form-wrapper label {
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.form-wrapper input,
+.form-wrapper textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.form-wrapper button {
+  padding: 10px 20px;
+  background-color: #f66060;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.form-wrapper button:hover {
+  background-color: #ee4747;
+}
