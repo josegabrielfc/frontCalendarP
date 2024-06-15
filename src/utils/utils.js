@@ -19,7 +19,7 @@ const parseDate = (dateString) => {
   
   const isWeekend = (date) => {
     const day = date.getDay();
-    return day === 0 || day === 6; // Sunday (0) or Saturday (6)
+    return day === 0; // Sunday (0) or Saturday (6)
   }
   
   const getNextBusinessDay = (date, holidays, targetDayOfWeek) => {
